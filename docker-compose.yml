@@ -1,0 +1,51 @@
+version: "3.8"
+
+services:
+    portal:
+        build: ./portal
+        container_name: node_portal
+        ports:
+            - "8080:8080"
+        environment:
+            - AUTH_SERVICE_URL=http://172.20.0.10:8081
+            - COURSE_SERVICE_URL=http://172.20.0.20:8082
+            - GRADE_SERVICE_URL=http://172.20.0.30:8083
+        networks:
+            backend_net:
+                ipv4_address: 172.20.0.5
+
+    auth-service:
+        build: ./auth-service
+        container_name: node_auth
+        ports:
+            - "8081:8081"
+        environment:
+            - JWT_SECRET=super_secure_secret_key_12345
+        networks:
+            backend_net:
+                ipv4_address: 172.20.0.10
+
+    course-service:
+        build: ./course-service
+        container_name: node_course
+        ports:
+            - "8082:8082"
+        networks:
+            backend_net:
+                ipv4_address: 172.20.0.20
+
+    grade-service:
+        build: ./grade-service
+        container_name: node_grade
+        ports:
+            - "8083:8083"
+        networks:
+            backend_net:
+                ipv4_address: 172.20.0.30
+
+networks:
+    backend_net:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: 172.20.0.0/16

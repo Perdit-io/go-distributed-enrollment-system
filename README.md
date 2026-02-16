@@ -79,7 +79,7 @@ docker-compose up --build
 
 **Verify:**
 
-1. Open [http://localhost:8080](https://www.google.com/search?q=http://localhost:8080).
+1. Open [http://localhost:8080](http://localhost:8080).
 2. Login with: `student1` / `pass123`.
 
 ### 2. The "Fault Tolerance" Demo
@@ -89,7 +89,7 @@ Demonstrate that the application survives a backend node failure.
 1. Keep your browser open on the Dashboard.
 2. Open a terminal and kill the Grading Service:
 ```bash
-docker stop grade-service
+docker stop node_grade
 
 ```
 
@@ -104,12 +104,14 @@ Prove that the API is secured against unauthorized access and role spoofing.
 
 ```bash
 # Attempt to access grades without a token
-curl -i http://localhost:8083/grades?student_id=student1
+curl -i "http://localhost:8083/grades?student_id=student1"
 # Result: 401 Unauthorized
+# Unauthorized: Missing token
 
-# Attempt to access Faculty data as a Student (Replace <TOKEN> with your browser cookie)
-curl -i -H "Authorization: Bearer <STUDENT_TOKEN>" "http://localhost:8083/grades?student_id=faculty1"
+# Attempt to access another student's data (Replace <TOKEN> with your browser cookie)
+curl -i -H "Authorization: Bearer <STUDENT_TOKEN>" "http://localhost:8083/grades?student_id=student2"
 # Result: 403 Forbidden
+# Forbidden: You cannot view another student's grades
 
 ```
 
@@ -134,4 +136,5 @@ The system is pre-loaded with the following accounts for testing:
 | Username | Password | Role | Capabilities |
 | --- | --- | --- | --- |
 | **student1** | `pass123` | Student | Can enroll, View own grades. |
+| **student2** | `pass123` | Student | Can enroll, View own grades. |
 | **faculty1** | `pass123` | Faculty | Can View all grades, Upload new grades. |
